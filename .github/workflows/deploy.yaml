@@ -1,0 +1,33 @@
+name: deploy-mauro
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/Mau2606
+  CONTAINER_NAME: demo-go
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login-gcr
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Docker-build
+        run: docker buildx build --platform linux/arm64,linux/arm/v7 -t $IMAGE_NAME/$CONTAINER_NAME:latest --push .
+  
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push
+    steps:
+      - name: login-gcr
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: apply
+        run: | 
