@@ -35,6 +35,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u azratul --password-stdin
       - name: apply
         run: | 
+          ls -lah
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
           kubectl rollout restart deployment demo-mau2606
