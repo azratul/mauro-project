@@ -9,7 +9,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/Mau2606
+  IMAGE_NAME: ghcr.io/mau2606
   CONTAINER_NAME: demo-go
 
 jobs:
@@ -20,6 +20,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Login-gcr
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
       - name: Docker-build
         run: docker buildx build --platform linux/arm64,linux/arm/v7 -t $IMAGE_NAME/$CONTAINER_NAME:latest --push .
   
@@ -33,4 +37,4 @@ jobs:
         run: | 
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
-          kubectl rollout restart deployment demo-Mau2606
+          kubectl rollout restart deployment demo-mau2606
