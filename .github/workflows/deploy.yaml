@@ -31,6 +31,8 @@ jobs:
     runs-on: self-hosted
     needs: build-and-push
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: login-gcr
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u azratul --password-stdin
       - name: apply
