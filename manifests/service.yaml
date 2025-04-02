@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-Mau2606
+  name: service-mau2606
 spec:
   selector:
-    app: demo-Mau2606
+    app: demo-mau2606
   ports:
     - protocol: TCP
       port: 80
