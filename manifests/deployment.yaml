@@ -1,19 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-mau2606
+  name: demo-mauro
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo-mau2606
+      app: demo-mauro
   template:
     metadata:
       labels:
-        app: demo-mau2606
+        app: demo-mauro
     spec:
       containers:
-        - name: demo-mau2606
-          image: ghcr.io/azratul/demo-mau:latest
+        - name: demo-mauro
+          image: ghcr.io/azratul/mauro-project:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 5000
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"

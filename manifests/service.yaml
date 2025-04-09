@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-mau2606
+  name: demo-mauro
 spec:
   selector:
-    app: demo-mau2606
+    app: demo-mauro
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8000
-  type: LoadBalancer
+      targetPort: 5000
+  type: ClusterIP
