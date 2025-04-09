@@ -17,6 +17,14 @@ spec:
           image: ghcr.io/azratul/mauro-project:latest
           ports:
             - containerPort: 5000
+          env:
+            - name: FLUENTD_HOST
+              value: "192.168.100.77"
+            - name: FLUENTD_PORT
+              value: "24224"
+          envFrom:
+            - secretRef: 
+                name: mongo-secret  
           resources:
             limits:
               memory: "128Mi"
