@@ -5,8 +5,10 @@ from fluent import handler
 import logging
 
 fluent_host = os.getenv("FLUENTD_HOST", "localhost")
-fluent_port = os.getenv("FLUENTD_PORT", 24224)
+fluent_port = int(os.getenv("FLUENTD_PORT", 24224))
+
 app_name = "flask-mauro"
+
 fluent_handler = handler.FluentHandler(app_name, host=fluent_host, port=fluent_port)
 formatter = handler.FluentRecordFormatter({
     'job': app_name,
@@ -14,7 +16,6 @@ formatter = handler.FluentRecordFormatter({
     'where': '%(module)s.%(funcName)s',
     'message': '%(message)s'
 })
-
 
 fluent_handler.setFormatter(formatter)
 
