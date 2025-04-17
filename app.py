@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from pymongo import MongoClient
 import os
 from fluent import handler
+from datetime import datetime
 import logging
 
 fluent_host = os.getenv("FLUENTD_HOST", "localhost")
@@ -14,6 +15,9 @@ formatter = handler.FluentRecordFormatter({
     'job': app_name,
     'host': '%(hostname)s',
     'where': '%(module)s.%(funcName)s',
+    'path': '%(path)s',
+    'request': '%(request)s',
+    'ip': '%(ip)s',
     'message': '%(message)s'
 })
 
@@ -37,29 +41,44 @@ db = client[mongo_db]
 
 @app.route('/')
 def home():
-    logger.info("Request a /")
+    logger.info("Request a /", extra=g.log_extra)
     return jsonify({"message": "Hello from Flask!"})
 
 @app.route('/health')
 def health():
-    logger.info("Health check OK")
+    logger.info("Health check OK", extra=g.log_extra)
     return jsonify({"status": "healthy"}), 200
 
 @app.route('/echo', methods=['POST'])
 def echo():
     data = request.get_json()
-    logger.info(f"Received JSON: {data}")
+    logger.info(f"Received JSON", extra=g.log_extra)
     return jsonify(data)
 
 @app.route('/mongo')
 def mongo_data():
     try:
         items = list(db["example"].find({}, {"_id": 0}))
-        logger.info("Data fetched from MongoDB")
+        logger.info("Data fetched from MongoDB", extra=g.log_extra)
         return jsonify(items)
     except Exception as e:
-        logger.error(f"Error accessing MongoDB: {e}")
+        logger.error(f"Error accessing MongoDB: {e}", extra=g.log_extra)
         return jsonify({"error": "MongoDB access error"}), 500
+
+@app.before_request
+def log_request():
+    if request.method == 'GET':
+        request_data = request.args.to_dict()
+    elif request.is_json:
+        request_data = request.get_json(silent=True)
+    else:
+        request_data = None
+
+    g.log_extra = {
+        'ip': request.remote_addr,
+        'request': request_data,
+        'path': request.path
+    }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
