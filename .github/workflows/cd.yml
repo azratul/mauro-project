@@ -28,4 +28,5 @@ jobs:
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
           kubectl apply -f manifests/ingress.yaml
+          kubectl apply -f manifests/hpa.yaml
           kubectl rollout restart deployment $DEPLOY_NAME
